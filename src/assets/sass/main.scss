@@ -1,0 +1,17 @@
+@use "sass:map";
+@import "reset";
+@import "fonts";
+@import "colors";
+@import "v-dicti";
+
+#app {
+  font-family: 'Mina Regular';
+  font-size: 18px;
+  background: map.get($colors, 'background');
+  min-height: 100vh;
+}
+
+.container {
+  width: 80%;
+  margin: 0 auto;
+}

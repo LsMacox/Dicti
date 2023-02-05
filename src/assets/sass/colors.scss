@@ -1,0 +1,16 @@
+$colors: (
+  'primary': #FFCE56,
+  'secondary': #454545,
+  'secondary-2': #FFE589,
+  'background': linear-gradient(180deg, #FFE178 0%, rgba(255, 226, 121, 0.56) 100%),
+  'stroke': #FFE381,
+);
+
+@each $name, $color in $colors {
+  .base-color-#{$name} {
+    color: $color;
+  }
+  .base-bg-#{$name} {
+    background-color: $color;
+  }
+}

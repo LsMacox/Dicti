@@ -1,0 +1,48 @@
+@font-face {
+  font-family: 'Mina Regular';
+  src: url('@/assets/fonts/Mina/Mina-Regular.ttf') format("opentype");
+}
+
+@font-face {
+  font-family: 'Mina Bold';
+  src: url('@/assets/fonts/Mina/Mina-Bold.ttf') format("opentype");
+}
+
+@font-face {
+  font-family: 'Roboto Regular';
+  src: url('@/assets/fonts/Roboto/Roboto-Regular.ttf') format("opentype");
+}
+
+@font-face {
+  font-family: 'Roboto Bold';
+  src: url('@/assets/fonts/Roboto/Roboto-Bold.ttf') format("opentype");
+}
+
+$font-families: (
+  'mina-regular': 'Mina Regular',
+  'mina-bold': 'Mina Bold',
+  'roboto-regular': 'Roboto Regular',
+  'roboto-bold': 'Roboto Bold',
+);
+
+$font-sizes: (
+  'ssm': 12px,
+  'xsm': 14px,
+  'sm': 16px,
+  'm': 18px,
+  'l': 22px,
+  'xl': 24px,
+);
+
+@each $name, $fz in $font-sizes {
+  .base-fs-#{$name} {
+    font-size: $fz;
+  }
+}
+
+@each $name,
+$ff in $font-families {
+  .base-ff-#{$name} {
+    font-family: $ff;
+  }
+}

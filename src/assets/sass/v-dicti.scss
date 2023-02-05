@@ -1,0 +1,52 @@
+@use "sass:map";
+@import "fonts";
+@import "colors";
+@import "variables";
+
+a.v-dicti-href {
+  text-decoration: none;
+  font-size: map.get($font-sizes, 'l');
+  color: map.get($colors, 'secondary');
+}
+
+.v-dicti-dropdown__list {
+  background-color: map.get($colors, "primary");
+  border-radius: 6px;
+  padding: 6px 0;
+  z-index: 10;
+  transition: 0.3s ease;
+  @include box-shadow;
+
+  .v-item {
+    vertical-align: bottom;
+    font-size: map.get($font-sizes, "sm");
+
+    &:not(:first-child) {
+      margin-top: 6px;
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid map.get($colors, "stroke");
+      padding-bottom: 3px;
+    }
+  }
+
+  .v-href {
+    color: map.get($colors, "secondary");
+    text-decoration: none;
+    margin-left: 16px;
+
+    &:hover {
+      color: map.get($colors, "stroke");
+    }
+
+    &.v-href--hide {
+      opacity: 0.6;
+    }
+
+    &.v-href--active {
+      opacity: 1;
+      color: map.get($colors, "stroke");
+    }
+  }
+}
