@@ -1,7 +1,7 @@
 <template>
   <div class="v-dicti-table">
-    <div class="overlay"></div>
-    <table class="table-header">
+    <div ref="overlay" class="overlay"></div>
+    <table ref="table" class="table-header">
       <thead>
         <tr>
           <td v-for="(header, idx) in headers" :key="idx">{{ header.text }}</td>
@@ -163,7 +163,17 @@ export default defineComponent({
       return splitItems[this.page - 1] ?? []
     },
   },
+  mounted() {
+    this.setOverlayWidth()
+    window.addEventListener("resize", this.setOverlayWidth)
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.setOverlayWidth)
+  },
   methods: {
+    setOverlayWidth() {
+      this.$refs.overlay.style.width = this.$refs.table.clientWidth + "px"
+    },
     getHeaderByKey(key: string) {
       return (
         this.headers.filter(
@@ -215,6 +225,7 @@ $table_overlay_offset: 38px;
   table {
     width: 100%;
     border-collapse: separate;
+    overflow-x: auto;
   }
   thead {
     font-family: "Roboto";
@@ -231,7 +242,7 @@ $table_overlay_offset: 38px;
         }
       }
       th {
-        padding: 12px 0 12px 37px;
+        padding: 12px 37px 12px 37px;
       }
     }
   }

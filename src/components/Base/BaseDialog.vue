@@ -63,6 +63,7 @@ export default defineComponent({
     z-index: 10;
   }
   .card {
+    max-width: 100%;
     position: fixed;
     top: 50%;
     transform: translateY(-50%) translateX(-50%);

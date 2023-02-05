@@ -44,7 +44,7 @@ import BaseDialog from "@/components/Base/BaseDialog.vue"
           :src="
             selected_dictionary.img_path
               ? selected_dictionary.img_path + originalSelectedItem?.filename
-              : originalSelectedItem.picurl ?? ''
+              : originalSelectedItem?.picurl ?? ''
           "
           :alt="originalSelectedItem?.picau ?? ''"
           width="386"
@@ -179,8 +179,6 @@ export default defineComponent({
   },
   mounted() {
     if (!Object.keys(this.selected_dictionary).length) {
-      console.log(this.dictionary_list[0])
-
       this.selectDictionary(this.dictionary_list[0])
     }
 
@@ -226,6 +224,15 @@ export default defineComponent({
       margin-top: 20px;
       margin-bottom: 20px;
       border-radius: 12px;
+      max-width: 100%;
+    }
+  }
+}
+@media screen and (max-width: 735px) {
+  .home-table {
+    overflow-x: auto;
+    &:deep(table) {
+      min-width: 100%;
     }
   }
 }

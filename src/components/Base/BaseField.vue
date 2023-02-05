@@ -105,7 +105,7 @@ export default defineComponent({
     border-radius: 5px;
   }
   .v-text-field__slot input {
-    margin: 18px 0 18px 16px;
+    padding: 18px 0 18px 16px;
     height: auto;
     background: transparent;
     border: none;

@@ -15,6 +15,7 @@ import BaseIcon from "@/components/Base/BaseIcon.vue"
         height="89"
       />
       <BaseDropdown
+        class="dictionary-dropdown"
         v-model="showMenu"
         :items="dictionaryListToDropdown"
         width="206px"
@@ -30,6 +31,7 @@ import BaseIcon from "@/components/Base/BaseIcon.vue"
       </BaseDropdown>
     </div>
     <BaseField
+      class="search-field"
       placeholder="Поиск по словарю"
       icon="search"
       width="250px"
@@ -91,9 +93,15 @@ export default defineComponent({
   display: flex;
   justify-content: space-between;
   align-items: center;
+  @media screen and (max-width: 645px) {
+    flex-direction: column;
+  }
   .header-right {
     display: flex;
     margin-top: 17px;
+    @media screen and (max-width: 645px) {
+      flex-direction: column;
+    }
     .logo {
       margin-right: 45px;
     }
@@ -102,6 +110,20 @@ export default defineComponent({
       display: flex;
       align-items: center;
       margin-top: 24px;
+    }
+  }
+}
+@media screen and (max-width: 735px) {
+  .main-header {
+    flex-direction: column;
+  }
+  .search-field {
+    margin-top: 34px;
+  }
+  .dictionary-dropdown {
+    &:deep(.v-dicti-dropdown__list) {
+      margin-left: 50%;
+      transform: translateX(-50%);
     }
   }
 }
