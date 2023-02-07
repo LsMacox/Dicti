@@ -80,10 +80,15 @@ import { defineComponent } from "vue"
 import BaseDropdown from "./BaseDropdown.vue"
 import BaseIcon from "./BaseIcon.vue"
 import type { PropType } from "vue"
-import type { ITableHeader, ITableItems, IDropdownItem } from "@/interfaces"
+import type {
+  ITableHeader,
+  ITableItems,
+  IDropdownItem,
+  ITableOptions,
+} from "@/interfaces"
 
 export default defineComponent({
-  emits: ["click-item"],
+  emits: ["click-item", "update:options"],
   components: {
     BaseIcon,
     BaseDropdown,
@@ -109,6 +114,16 @@ export default defineComponent({
     search: {
       type: String,
     },
+    options: {
+      type: Object as PropType<ITableOptions>,
+      default: () => {
+        return {
+          page: null,
+          itemPerPage: null,
+          pagesCount: null,
+        }
+      },
+    },
   },
   data() {
     return {
@@ -122,6 +137,17 @@ export default defineComponent({
       if (newValue < 1 || newValue > this.pagesCount) {
         this.page = oldValue
       }
+
+      this.updateOptions()
+    },
+    itemPerPage() {
+      this.updateOptions()
+    },
+    pagesCount() {
+      this.updateOptions()
+    },
+    "options.page"(newValue: number) {
+      this.page = newValue
     },
     filteredItems() {
       this.page = 1
@@ -166,11 +192,26 @@ export default defineComponent({
   mounted() {
     this.setOverlayWidth()
     window.addEventListener("resize", this.setOverlayWidth)
+    this.updateOptions()
   },
   beforeUnmount() {
     window.removeEventListener("resize", this.setOverlayWidth)
   },
   methods: {
+    updateOptions() {
+      this.$emit("update:options", this.getOptions())
+    },
+    getOptions() {
+      const page = this.page,
+        pagesCount = this.pagesCount,
+        itemPerPage = this.itemPerPage
+
+      return {
+        page,
+        pagesCount,
+        itemPerPage,
+      }
+    },
     setOverlayWidth() {
       this.$refs.overlay.style.width = this.$refs.table.clientWidth + "px"
     },

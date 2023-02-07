@@ -8,3 +8,9 @@ export interface ITableHeader {
 export interface ITableItems {
   [header_key: string]: any
 }
+
+export interface ITableOptions {
+  page?: number
+  pagesCount?: number
+  itemPerPage?: number
+}

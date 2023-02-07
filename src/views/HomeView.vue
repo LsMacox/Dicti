@@ -12,6 +12,7 @@ import BaseDialog from "@/components/Base/BaseDialog.vue"
       search-by="word"
       :search="search"
       @clickItem="onClickTableItem"
+      v-model:options="tableOptions"
     ></BaseTable>
     <BaseDialog class="home-dialog" v-model="showDialog">
       <template #append-icon>
@@ -84,6 +85,7 @@ export default defineComponent({
   data() {
     return {
       showDialog: false,
+      tableOptions: {},
       tableHeaders: [
         {
           text: "Номер",
@@ -169,8 +171,8 @@ export default defineComponent({
     },
   },
   watch: {
-    showDialog(v) {
-      if (v) {
+    selectedItem(newValue) {
+      if (newValue) {
         let audio = new Audio()
         audio.src = this.originalSelectedItem.sound
         audio.autoplay = true
@@ -183,6 +185,11 @@ export default defineComponent({
     }
 
     this.getDictionaryJson(this.selected_dictionary)
+
+    window.addEventListener("keydown", this.onKeydown)
+  },
+  unmounted() {
+    window.removeEventListener("keydown", this.onKeydown)
   },
   methods: {
     ...mapActions(useDictionaryStore, [
@@ -192,6 +199,41 @@ export default defineComponent({
     onClickTableItem(item: any) {
       this.selectedItem = item
       this.showDialog = !this.showDialog
+    },
+    onKeydown(event: KeyboardEvent) {
+      if (this.showDialog) {
+        if (event.key == "ArrowLeft" && this.selectedItem.id > 1) {
+          this.selectItemById(this.selectedItem.id - 1)
+
+          if (
+            this.selectedItem.id - 1 <
+            this.tableOptions.itemPerPage * (this.tableOptions.page - 1)
+          ) {
+            this.tableOptions.page--
+          }
+        }
+
+        if (
+          event.key == "ArrowRight" &&
+          this.selectedItem.id < this.dictionaryList.length
+        ) {
+          this.selectItemById(this.selectedItem.id + 1)
+
+          if (
+            this.selectedItem.id >
+            this.tableOptions.itemPerPage * this.tableOptions.page
+          ) {
+            this.tableOptions.page++
+          }
+        }
+      }
+    },
+    selectItemById(id: number) {
+      this.selectedItem = this.dictionaryList.filter(
+        (item: IDictionaryKeys) => {
+          return item.id == id
+        }
+      )[0]
     },
   },
 })

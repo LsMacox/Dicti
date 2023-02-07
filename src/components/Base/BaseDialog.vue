@@ -72,6 +72,7 @@ export default defineComponent({
     z-index: 11;
     border-radius: 15px;
     padding: 8px 11px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
     .card-header {
       display: flex;
       justify-content: flex-end;
