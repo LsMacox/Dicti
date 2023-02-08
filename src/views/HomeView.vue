@@ -226,6 +226,10 @@ export default defineComponent({
             this.tableOptions.page++
           }
         }
+
+        if (event.key == "Escape") {
+          this.showDialog = false
+        }
       }
     },
     selectItemById(id: number) {
