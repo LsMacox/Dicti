@@ -109,7 +109,7 @@ export default defineComponent({
       },
     },
     searchBy: {
-      type: String as PropType<ITableHeader["value"]>,
+      type: [String, Array] as PropType<ITableHeader["value"] | string[]>,
     },
     search: {
       type: String,
@@ -169,6 +169,12 @@ export default defineComponent({
 
       if (this.searchBy && this.search) {
         items = items.filter((item: any) => {
+          if (Array.isArray(this.searchBy)) {
+            return this.searchBy.some((searchBy: string) => {
+              return !String(item[searchBy]).search(this.search)
+            })
+          }
+
           return !String(item[this.searchBy]).search(this.search)
         })
       }
