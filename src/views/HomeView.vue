@@ -11,6 +11,7 @@ import BaseDialog from "@/components/Base/BaseDialog.vue"
       :items="dictionaryListToTable"
       :search-by="['word', 'translate']"
       :search="search"
+      data-not-found-text="Совпадения не найдены!"
       @clickItem="onClickTableItem"
       v-model:options="tableOptions"
     ></BaseTable>
@@ -91,6 +92,7 @@ export default defineComponent({
           text: "Номер",
           align: "start",
           value: "id",
+          maxWidth: 735,
         },
         { text: "Слово", align: "start", value: "word" },
         { text: "Транскрипция", align: "start", value: "transcription" },
@@ -276,9 +278,16 @@ export default defineComponent({
 }
 @media screen and (max-width: 735px) {
   .home-table {
-    overflow-x: auto;
-    &:deep(table) {
-      min-width: 100%;
+    margin-top: 40px;
+  }
+  .container {
+    padding-bottom: 132px;
+  }
+  .home-dialog {
+    .icon-close,
+    .icon-repeat {
+      width: 30px;
+      height: 30px;
     }
   }
 }

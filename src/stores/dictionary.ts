@@ -13,7 +13,7 @@ export const useDictionaryStore = defineStore("dictionary", {
   state: () => {
     return {
       selected: {} as IStoreDictionaryItem,
-      list: useStorage("dictionary:list", [
+      list: [
         {
           id: 1,
           orig_name: "английско-русский",
@@ -21,9 +21,9 @@ export const useDictionaryStore = defineStore("dictionary", {
           path: "json/en-ru.json",
           img_path: "./jpg/en-ru/",
         },
-      ] as IStoreDictionaryItem[]),
+      ] as IStoreDictionaryItem[],
       selected_list: [],
-      search: useStorage("dictionary:search", ""),
+      search: "",
     }
   },
   actions: {

@@ -4,25 +4,34 @@
     <table ref="table" class="table-header">
       <thead>
         <tr>
-          <td v-for="(header, idx) in headers" :key="idx">{{ header.text }}</td>
+          <td v-for="(header, idx) in preparedHeaders" :key="idx">
+            {{ header.text }}
+          </td>
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="(item, idx) in pageItems"
-          :key="idx"
-          @click="$emit('click-item', item)"
-        >
-          <th
-            v-for="[key, value] in Object.entries(item)"
-            :key="key"
-            :style="[
-              getHeaderByKey(key).align == 'start' ? 'text-align: start' : '',
-            ]"
+        <template v-if="filteredItems.length">
+          <tr
+            v-for="(item, idx) in pageItems"
+            :key="idx"
+            @click="$emit('click-item', item)"
           >
-            {{ value }}
-          </th>
-        </tr>
+            <th
+              v-for="header in preparedHeaders"
+              :key="header.value"
+              :style="[header.align == 'start' ? 'text-align: start' : '']"
+            >
+              {{ item[header.value] }}
+            </th>
+          </tr>
+        </template>
+        <template v-else>
+          <tr class="item-not-found">
+            <th :colspan="headers.length">
+              {{ dataNotFoundText }}
+            </th>
+          </tr>
+        </template>
       </tbody>
     </table>
     <div class="table-footer">
@@ -124,6 +133,10 @@ export default defineComponent({
         }
       },
     },
+    dataNotFoundText: {
+      type: String,
+      default: "Data not found!",
+    },
   },
   data() {
     return {
@@ -194,6 +207,13 @@ export default defineComponent({
 
       return splitItems[this.page - 1] ?? []
     },
+    preparedHeaders(): ITableHeader[] {
+      return this.headers.filter(
+        (header: ITableHeader) =>
+          !header.maxWidth ||
+          (header.maxWidth && header.maxWidth < window.screen.width)
+      )
+    },
   },
   mounted() {
     this.setOverlayWidth()
@@ -219,14 +239,7 @@ export default defineComponent({
       }
     },
     setOverlayWidth() {
-      this.$refs.overlay.style.width = this.$refs.table.clientWidth + "px"
-    },
-    getHeaderByKey(key: string) {
-      return (
-        this.headers.filter(
-          (header: ITableHeader) => header.value == key
-        )?.[0] ?? {}
-      )
+      this.$refs.overlay.style.width = this.$refs.table.offsetWidth + "px"
     },
     onClickOutside() {
       this.showItemPerPageDropdown = false
@@ -271,8 +284,8 @@ $table_overlay_offset: 38px;
   }
   table {
     width: 100%;
+    min-width: 100%;
     border-collapse: separate;
-    overflow-x: auto;
   }
   thead {
     font-family: "Roboto";
@@ -340,6 +353,54 @@ $table_overlay_offset: 38px;
       .next {
         cursor: pointer;
       }
+    }
+  }
+}
+
+@media screen and (max-width: 735px) {
+  .v-dicti-table {
+    display: inline-block;
+    width: 100%;
+    .overlay {
+      top: 0;
+      box-shadow: none;
+      height: calc(100% + $table_overlay_offset);
+    }
+    thead {
+      display: none;
+    }
+    tbody {
+      tr {
+        margin: 10px;
+        display: flex;
+        flex-direction: column;
+        background-color: map.get($colors, "secondary-2");
+        border-radius: 10px;
+        th {
+          text-align: center !important;
+          border: none !important;
+        }
+      }
+      tr.item-not-found {
+        text-align: center;
+      }
+    }
+  }
+  .table-footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .pagination {
+    flex-direction: column;
+    margin: 0 !important;
+    align-items: center;
+    .pagination__block {
+      order: 2;
+    }
+    .pagination__control {
+      order: 1;
+      margin: 0 0 10px 0 !important;
     }
   }
 }

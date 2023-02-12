@@ -42,11 +42,11 @@ export default defineComponent({
     },
     width: {
       type: String,
-      default: "250px",
+      default: "",
     },
     height: {
       type: String,
-      default: "55px",
+      default: "",
     },
     icon: {
       type: String,
@@ -81,6 +81,7 @@ export default defineComponent({
 
 .v-dicti-field {
   .v-input__control {
+    padding-right: 16px;
     position: relative;
     display: flex;
     flex-wrap: wrap;
@@ -105,7 +106,7 @@ export default defineComponent({
     border-radius: 5px;
   }
   .v-text-field__slot input {
-    padding: 18px 0 18px 16px;
+    padding: 16px 0 16px 16px;
     height: auto;
     background: transparent;
     border: none;

@@ -3,6 +3,7 @@ export interface ITableHeader {
   align?: "start" | "center" | "end"
   sortable?: boolean
   value: string
+  maxWidth?: number
 }
 
 export interface ITableItems {

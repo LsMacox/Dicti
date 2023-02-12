@@ -34,8 +34,6 @@ import BaseIcon from "@/components/Base/BaseIcon.vue"
       class="search-field"
       placeholder="Поиск по словарю"
       icon="search"
-      width="250px"
-      heigth="51px"
       :value="search"
       @update:value="onInputSeach"
     />
@@ -93,15 +91,9 @@ export default defineComponent({
   display: flex;
   justify-content: space-between;
   align-items: center;
-  @media screen and (max-width: 645px) {
-    flex-direction: column;
-  }
   .header-right {
     display: flex;
     margin-top: 17px;
-    @media screen and (max-width: 645px) {
-      flex-direction: column;
-    }
     .logo {
       margin-right: 45px;
     }
@@ -118,7 +110,7 @@ export default defineComponent({
     flex-direction: column;
   }
   .search-field {
-    margin-top: 34px;
+    margin-top: 40px;
   }
   .dictionary-dropdown {
     &:deep(.v-dicti-dropdown__list) {
