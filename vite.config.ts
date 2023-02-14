@@ -12,4 +12,8 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  mode: "production",
+  build: {
+    cssCodeSplit: false,
+  },
 })

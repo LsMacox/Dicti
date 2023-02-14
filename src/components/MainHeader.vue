@@ -33,7 +33,7 @@ import BaseIcon from "@/components/Base/BaseIcon.vue"
     <BaseField
       class="search-field"
       placeholder="Поиск по словарю"
-      icon="search"
+      icon="close"
       :value="search"
       @update:value="onInputSeach"
     />
@@ -45,7 +45,6 @@ import { mapState, mapActions } from "pinia"
 import { useDictionaryStore } from "@/stores/dictionary"
 import type { IStoreDictionaryItem } from "@/stores/dictionary"
 import type { IDropdownItem } from "@/interfaces"
-import { debounce } from "@/helpers"
 
 export default defineComponent({
   data() {
@@ -79,9 +78,7 @@ export default defineComponent({
       this.showMenu = false
     },
     onInputSeach(search: string) {
-      debounce(() => {
-        this.setSearch(search)
-      }, 100)()
+      this.setSearch(search)
     },
   },
 })

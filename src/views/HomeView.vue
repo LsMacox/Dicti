@@ -11,7 +11,6 @@ import BaseDialog from "@/components/Base/BaseDialog.vue"
       :items="dictionaryListToTable"
       :search-by="['word', 'translate']"
       :search="search"
-      data-not-found-text="Совпадения не найдены!"
       @clickItem="onClickTableItem"
       v-model:options="tableOptions"
     ></BaseTable>
@@ -68,6 +67,7 @@ import { defineComponent } from "vue"
 import { mapState, mapActions } from "pinia"
 import { useDictionaryStore } from "@/stores/dictionary"
 import type { ITableHeader, ITableItems } from "@/interfaces"
+import { defaultDocument } from "@vueuse/core"
 
 interface IDictionaryKeys {
   id: number
@@ -189,9 +189,11 @@ export default defineComponent({
     this.getDictionaryJson(this.selected_dictionary)
 
     window.addEventListener("keydown", this.onKeydown)
+    window.addEventListener("click", this.onClick)
   },
   unmounted() {
     window.removeEventListener("keydown", this.onKeydown)
+    window.removeEventListener("click", this.onClick)
   },
   methods: {
     ...mapActions(useDictionaryStore, [
@@ -204,33 +206,51 @@ export default defineComponent({
     },
     onKeydown(event: KeyboardEvent) {
       if (this.showDialog) {
-        if (event.key == "ArrowLeft" && this.selectedItem.id > 1) {
-          this.selectItemById(this.selectedItem.id - 1)
-
-          if (
-            this.selectedItem.id - 1 <
-            this.tableOptions.itemPerPage * (this.tableOptions.page - 1)
-          ) {
-            this.tableOptions.page--
-          }
+        if (event.key == "ArrowLeft") {
+          this.prevWord()
         }
 
-        if (
-          event.key == "ArrowRight" &&
-          this.selectedItem.id < this.dictionaryList.length
-        ) {
-          this.selectItemById(this.selectedItem.id + 1)
-
-          if (
-            this.selectedItem.id >
-            this.tableOptions.itemPerPage * this.tableOptions.page
-          ) {
-            this.tableOptions.page++
-          }
+        if (event.key == "ArrowRight") {
+          this.nextWord()
         }
 
         if (event.key == "Escape") {
           this.showDialog = false
+        }
+      }
+    },
+    onClick(event: PointerEvent) {
+      if (window.screen.width < 525 && this.showDialog) {
+        if (event.clientY < window.screen.height / 2) return
+
+        if (event.clientX < window.screen.width / 2) {
+          this.prevWord()
+        } else {
+          this.nextWord()
+        }
+      }
+    },
+    prevWord() {
+      if (this.selectedItem.id > 1) {
+        this.selectItemById(this.selectedItem.id - 1)
+
+        if (
+          this.selectedItem.id - 1 <
+          this.tableOptions.itemPerPage * (this.tableOptions.page - 1)
+        ) {
+          this.tableOptions.page--
+        }
+      }
+    },
+    nextWord() {
+      if (this.selectedItem.id < this.dictionaryList.length) {
+        this.selectItemById(this.selectedItem.id + 1)
+
+        if (
+          this.selectedItem.id >
+          this.tableOptions.itemPerPage * this.tableOptions.page
+        ) {
+          this.tableOptions.page++
         }
       }
     },

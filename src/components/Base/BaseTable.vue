@@ -10,7 +10,14 @@
         </tr>
       </thead>
       <tbody>
-        <template v-if="filteredItems.length">
+        <template v-if="!page">
+          <tr class="item-not-found">
+            <th :colspan="headers.length">
+              {{ pageNotExistsText }}
+            </th>
+          </tr>
+        </template>
+        <template v-else-if="filteredItems.length">
           <tr
             v-for="(item, idx) in pageItems"
             :key="idx"
@@ -137,6 +144,10 @@ export default defineComponent({
       type: String,
       default: "Data not found!",
     },
+    pageNotExistsText: {
+      type: String,
+      default: "The specified page does not exist",
+    },
   },
   data() {
     return {
@@ -147,7 +158,7 @@ export default defineComponent({
   },
   watch: {
     page(newValue: number, oldValue: number) {
-      if (newValue < 1 || newValue > this.pagesCount) {
+      if (newValue && (newValue < 1 || newValue > this.pagesCount)) {
         this.page = oldValue
       }
 
@@ -184,7 +195,9 @@ export default defineComponent({
         items = items.filter((item: any) => {
           if (Array.isArray(this.searchBy)) {
             return this.searchBy.some((searchBy: string) => {
-              return !String(item[searchBy]).search(this.search)
+              return !String(item[searchBy])
+                .toLowerCase()
+                .search(this.search.toLowerCase())
             })
           }
 
@@ -399,8 +412,13 @@ $table_overlay_offset: 38px;
       order: 2;
     }
     .pagination__control {
+      width: 100%;
+      justify-content: space-between;
       order: 1;
       margin: 0 0 10px 0 !important;
+      .separator {
+        display: none;
+      }
     }
   }
 }

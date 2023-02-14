@@ -9,6 +9,7 @@
   font-size: 18px;
   background: map.get($colors, 'background');
   min-height: 100vh;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 .container {
