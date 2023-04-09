@@ -12,7 +12,7 @@ export interface IStoreDictionaryItem {
 export const useDictionaryStore = defineStore("dictionary", {
   state: () => {
     return {
-      selected: {} as IStoreDictionaryItem,
+      selected_item: {} as IStoreDictionaryItem,
       list: [
         {
           id: 1,
@@ -27,8 +27,8 @@ export const useDictionaryStore = defineStore("dictionary", {
     }
   },
   actions: {
-    selectDictionary(dictionary: IStoreDictionaryItem) {
-      this.selected = dictionary
+    selectDictionaryItem(item: IStoreDictionaryItem) {
+      this.selected_item = item
     },
     async getDictionaryJson(dictionary: IStoreDictionaryItem) {
       const module = await import("@/assets/" + dictionary.path)

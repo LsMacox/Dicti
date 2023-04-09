@@ -67,14 +67,14 @@ export default defineComponent({
     },
   },
   methods: {
-    ...mapActions(useDictionaryStore, ["selectDictionary", "setSearch"]),
+    ...mapActions(useDictionaryStore, ["selectDictionaryItem", "setSearch"]),
     onClickMenuItem(item: IDropdownItem) {
       const dictionary_item = this.dictionary_list.filter(
         (dict_item: IStoreDictionaryItem) =>
           dict_item.id == (item.value as Extract<IStoreDictionaryItem, "id">)
       )[0] as IStoreDictionaryItem
 
-      this.selectDictionary(dictionary_item)
+      this.selectDictionaryItem(dictionary_item)
       this.showMenu = false
     },
     onInputSeach(search: string) {

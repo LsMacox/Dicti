@@ -79,13 +79,14 @@ export default defineComponent({
     }
   }
 }
-@media screen and (max-width: 525px) {
+@media screen and (max-width: 525px), screen and (max-height: 500px) {
   .v-dicti-dialog {
     .overlay {
       display: none;
     }
     .card {
       height: 100% !important;
+      width: 100% !important;
       box-shadow: none;
       border-radius: 0;
       .card-content {

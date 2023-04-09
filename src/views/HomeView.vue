@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/// <reference types="cordova" />
 import BaseIcon from "@/components/Base/BaseIcon.vue"
 import BaseTable from "@/components/Base/BaseTable.vue"
 import BaseDialog from "@/components/Base/BaseDialog.vue"
@@ -9,7 +10,7 @@ import BaseDialog from "@/components/Base/BaseDialog.vue"
       class="home-table"
       :headers="tableHeaders"
       :items="dictionaryListToTable"
-      :search-by="['word', 'translate']"
+      :search-by="['word', 'translate', 'id']"
       :search="search"
       @clickItem="onClickTableItem"
       v-model:options="tableOptions"
@@ -43,8 +44,8 @@ import BaseDialog from "@/components/Base/BaseDialog.vue"
         <img
           class="word-img"
           :src="
-            selected_dictionary.img_path
-              ? selected_dictionary.img_path + originalSelectedItem?.filename
+            selected_dictionary_item.img_path
+              ? selected_dictionary_item.img_path + originalSelectedItem?.filename
               : originalSelectedItem?.picurl ?? ''
           "
           :alt="originalSelectedItem?.picau ?? ''"
@@ -60,6 +61,10 @@ import BaseDialog from "@/components/Base/BaseDialog.vue"
         </p>
       </div>
     </BaseDialog>
+    <div class="control-overlay" :style="{'visibility': showDialog ? 'visible' : 'hidden'}">
+      <div class="overlay_left" @click="prevWord"></div>
+      <div class="overlay_right" @click="nextWord"></div>
+    </div>
   </main>
 </template>
 <script lang="ts">
@@ -67,7 +72,6 @@ import { defineComponent } from "vue"
 import { mapState, mapActions } from "pinia"
 import { useDictionaryStore } from "@/stores/dictionary"
 import type { ITableHeader, ITableItems } from "@/interfaces"
-import { defaultDocument } from "@vueuse/core"
 
 interface IDictionaryKeys {
   id: number
@@ -92,7 +96,7 @@ export default defineComponent({
           text: "Номер",
           align: "start",
           value: "id",
-          maxWidth: 735,
+          // maxWidth: 735,
         },
         { text: "Слово", align: "start", value: "word" },
         { text: "Транскрипция", align: "start", value: "transcription" },
@@ -106,12 +110,12 @@ export default defineComponent({
   computed: {
     ...mapState(useDictionaryStore, {
       dictionary_list: "list",
-      selected_dictionary: "selected",
+      selected_dictionary_item: "selected_item",
       selected_dictionary_list: "selected_list",
       search: "search",
     }),
     mapDictionaryKeys() {
-      switch (this.selected_dictionary.id) {
+      switch (this.selected_dictionary_item.id) {
         case 1: // en-ru
           return {
             id: "id",
@@ -143,16 +147,16 @@ export default defineComponent({
     dictionaryList(): IDictionaryKeys[] {
       return this.selected_dictionary_list.map((item: any) => {
         return {
-          id: item[this.mapDictionaryKeys["id"]],
-          orig: item[this.mapDictionaryKeys["orig"]],
-          trans: item[this.mapDictionaryKeys["trans"]],
-          transc: item[this.mapDictionaryKeys["transc"]],
-          picurl: item[this.mapDictionaryKeys["picurl"]] ?? "",
-          picau: item[this.mapDictionaryKeys["picau"]] ?? "default",
-          filename: item[this.mapDictionaryKeys["filename"]] ?? "default",
-          sound: item[this.mapDictionaryKeys["sound"]],
-          orig_ex: item[this.mapDictionaryKeys["orig_ex"]],
-          trans_ex: item[this.mapDictionaryKeys["trans_ex"]],
+          id: item[this.mapDictionaryKeys.id],
+          orig: item[this.mapDictionaryKeys.orig],
+          trans: item[this.mapDictionaryKeys.trans],
+          transc: item[this.mapDictionaryKeys.transc],
+          picurl: item[this.mapDictionaryKeys.picurl] ?? "",
+          picau: item[this.mapDictionaryKeys.picau] ?? "default",
+          filename: item[this.mapDictionaryKeys.filename] ?? "default",
+          sound: item[this.mapDictionaryKeys.sound],
+          orig_ex: item[this.mapDictionaryKeys.orig_ex],
+          trans_ex: item[this.mapDictionaryKeys.trans_ex],
         }
       })
     },
@@ -175,58 +179,61 @@ export default defineComponent({
   watch: {
     selectedItem(newValue) {
       if (newValue) {
-        let audio = new Audio()
+        const audio = new Audio()
         audio.src = this.originalSelectedItem.sound
         audio.autoplay = true
       }
     },
   },
   mounted() {
-    if (!Object.keys(this.selected_dictionary).length) {
-      this.selectDictionary(this.dictionary_list[0])
+    if (!Object.keys(this.selected_dictionary_item).length) {
+      this.selectDictionaryItem(this.dictionary_list[0])
     }
 
-    this.getDictionaryJson(this.selected_dictionary)
+    this.getDictionaryJson(this.selected_dictionary_item)
 
     window.addEventListener("keydown", this.onKeydown)
-    window.addEventListener("click", this.onClick)
+    window.addEventListener("backbutton", this.onBackButton);
   },
   unmounted() {
     window.removeEventListener("keydown", this.onKeydown)
-    window.removeEventListener("click", this.onClick)
+    window.removeEventListener("backbutton", this.onBackButton)
   },
   methods: {
     ...mapActions(useDictionaryStore, [
       "getDictionaryJson",
-      "selectDictionary",
+      "selectDictionaryItem",
     ]),
     onClickTableItem(item: any) {
       this.selectedItem = item
       this.showDialog = !this.showDialog
     },
-    onKeydown(event: KeyboardEvent) {
+    onBackButton() {
+      if (cordova.platformId !== 'windows') {
+        return;
+      }
+
       if (this.showDialog) {
-        if (event.key == "ArrowLeft") {
-          this.prevWord()
-        }
-
-        if (event.key == "ArrowRight") {
-          this.nextWord()
-        }
-
-        if (event.key == "Escape") {
-          this.showDialog = false
-        }
+        this.closeDialog()
       }
     },
-    onClick(event: PointerEvent) {
-      if (window.screen.width < 525 && this.showDialog) {
-        if (event.clientY < window.screen.height / 2) return
-
-        if (event.clientX < window.screen.width / 2) {
+    closeDialog() {
+      if (this.showDialog) {
+        this.showDialog = false
+      }
+    },
+    onKeydown(event: KeyboardEvent) {
+      if (this.showDialog) {
+        if (event.key === "ArrowLeft") {
           this.prevWord()
-        } else {
+        }
+
+        if (event.key === "ArrowRight") {
           this.nextWord()
+        }
+
+        if (event.key === "Escape") {
+          this.showDialog = false
         }
       }
     },
@@ -296,9 +303,34 @@ export default defineComponent({
     }
   }
 }
-@media screen and (max-width: 735px) {
+.control-overlay {
+  visibility: hidden;
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 0;
+  z-index: 20;
+  .overlay_left, .overlay_right {
+    position: absolute;
+    bottom: 0;
+    width: 50%;
+    height: 100%;
+  }
+  .overlay_left {
+    left: 0;
+  }
+  .overlay_right {
+    right: 0;
+  }
+}
+@media screen and (max-width: 735px), screen and (max-height: 500px) {
   .home-table {
     margin-top: 40px;
+  }
+  .control-overlay {
+    display: block;
   }
   .container {
     padding-bottom: 132px;

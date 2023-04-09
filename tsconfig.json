@@ -9,7 +9,6 @@
     "noImplicitThis": false,
     "lib": ["es2017", "DOM"]
   },
-
   "references": [
     {
       "path": "./tsconfig.config.json"
